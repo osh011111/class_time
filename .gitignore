@@ -95,7 +95,7 @@ Temporary Items
 ### 생성되는 스케쥴 로그파일 제외 ###
 schedule.log
 ### c 컴파일로 생성되는 로그파일 제외 ###
-schedule 
+scheduler
 
 # Exclude .NET assemblies from source
 

@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     }
 
     // 디버깅용 단순 출력
-    printf("=== 시간대별 점유 현황 (Raw) ===\n");
+    printf("=== 시간대별 점유 현황 ===\n");
     for(int i=0; i<24; i++) {
         if(time_map[i] != 0) printf("%d시-%d시 : Team %d\n", i, i+1, time_map[i]);
     }

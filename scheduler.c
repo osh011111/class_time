@@ -1,8 +1,5 @@
-// 1단계: 기본 구조 및 데이터 입력 (Input Parsing)
-// 가장 먼저 데이터 구조체를 정의하고, 커맨드 라인 인자(argv)를 받아 파싱이 잘 되는지 확인하는 단계입니다.
-
-
-
+// 2단계: 핵심 알고리즘 구현 (Sorting & Greedy Phase 1)
+// 회의실 배정 문제의 핵심인 '빨리 끝나는 순서대로 정렬'하고, 겹치지 않게 메인 팀을 뽑는 로직을 추가합니다.
 
 
 #include <stdio.h>
@@ -10,31 +7,42 @@
 #include <string.h>
 
 typedef struct {
-    int id;           // 팀 번호
-    int start;        // 시작 시간
-    int end;          // 종료 시간
-    int is_accepted;  // 1단계 합격 여부
+    int id; int start; int end; int is_accepted;
 } TimeSlot;
 
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: %s 1-3 4-6 …\n", argv[0]);
-        return 1;
-    }
+// 정렬 기준: 끝나는 시간이 빠른 순서
+int compare_1931(const void *a, const void *b) {
+    TimeSlot *t1 = (TimeSlot *)a;
+    TimeSlot *t2 = (TimeSlot *)b;
+    if (t1->end != t2->end) return t1->end - t2->end;
+    return t1->start - t2->start;
+}
 
+int main(int argc, char *argv[]) {
+    if (argc < 2) return 1;
     int count = argc - 1;
     TimeSlot teams[100];
 
-    // 1. 데이터 파싱
-    printf("=== 입력 데이터 확인 ===\n");
+    // 1. 파싱
     for (int i = 0; i < count; i++) {
         teams[i].id = i + 1;
-        // 문자열 파싱 (예: "1-3" -> start:1, end:3)
         sscanf(argv[i + 1], "%d-%d", &teams[i].start, &teams[i].end);
-        teams[i].is_accepted = 0; 
-        
-        printf("Team %d: %d시 ~ %d시\n", teams[i].id, teams[i].start, teams[i].end);
+        teams[i].is_accepted = 0;
     }
 
+    // 2. 정렬 (Greedy 알고리즘 준비)
+    qsort(teams, count, sizeof(TimeSlot), compare_1931);
+
+    // [Phase 1] 메인 팀 확정 (Greedy)
+    int last_end_time = 0;
+    printf("=== Phase 1: 메인 배정 결과 ===\n");
+    for (int i = 0; i < count; i++) {
+        if (teams[i].start >= last_end_time) {
+            teams[i].is_accepted = 1; // 합격 처리
+            last_end_time = teams[i].end;
+            printf("Team %d 배정됨 (%d-%d)\n", teams[i].id, teams[i].start, teams[i].end);
+        }
+    }
+    
     return 0;
 }
